@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>屬靈人生 RPG：我的信仰馬拉松</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #e67e22;
+            --bg-color: #f5f6fa;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* 題目卡片 */
+        .quiz-card {
+            display: none;
+        }
+        .quiz-card.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .progress {
+            font-size: 14px;
+            color: #95a5a6;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #e2e8f0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #4a5568;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover {
+            background: #edf2f7;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* 結局頁面 */
+        .result-page {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+        .result-title {
+            font-size: 22px;
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            background: #fff5eb;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--accent-color);
+        }
+        .result-body {
+            font-size: 15px;
+            line-height: 1.8;
+            text-align: justify;
+            color: #4a5568;
+            margin-bottom: 25px;
+        }
+        .result-tip {
+            background: #f0fff4;
+            border: 1px solid #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        /* 答題紀錄歷史區 */
+        .history-section {
+            margin-top: 40px;
+            text-align: left;
+            border-top: 2px dashed #e2e8f0;
+            padding-top: 25px;
+        }
+        .history-title {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .history-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #cbd5e0;
+        }
+        .history-q {
+            font-weight: bold;
+            font-size: 14px;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+        .history-a {
+            font-size: 14px;
+            color: var(--accent-color);
+            padding-left: 12px;
+        }
+
+        .restart-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 10px;
+        }
+        .restart-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎭 屬靈人生 RPG：我的信仰馬拉松</h1>
+    <div class="subtitle">探索你在平行時空中的靈性命運與終章</div>
+
+    <!-- 遊戲內容區 -->
+    <div id="game-core">
+        <div id="quiz-container"></div>
+    </div>
+
+    <!-- 結局顯示區 -->
+    <div id="result-page" class="result-page">
+        <h2>🏁 終點站：人生結算</h2>
+        <div id="result-title" class="result-title"></div>
+        <div id="result-body" class="result-body"></div>
+        <div id="result-tip" class="result-tip"></div>
+        
+        <button class="restart-btn" onclick="restartGame()">重新展開人生</button>
+
+        <!-- 答題歷史回顧 -->
+        <div class="history-section">
+            <div class="history-title">📜 我的生命軌跡回顧</div>
+            <div id="history-list"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 遊戲全局變數
+    let stats = { wis: 0, int: 0, con: 0, cha: 0 };
+    let currentStep = 0; 
+    let chosenBranch = ''; 
+    let dynamicQuestions = [];
+    let userAnswersLog = []; // 用來儲存玩家選過的「題目」與「答案文本」
+
+    // 基礎與通用題目庫
+    const baseQuestions = [
+        {
+            question: "星期五晚團契聚會結束之後，通常你會？",
+            options: [
+                { text: "緊係留低吹水，一係就起碼成班人一齊去食宵夜啦！", effect: { cha: 2, con: 1 } },
+                { text: "夠鐘即走，想快啲返屋企摺埋，自己一個好好充下電。", effect: { wis: 2, int: 1 } }
+            ]
+        },
+        {
+            question: "團契弟兄姊妹突然失戀或者俾人炒魷魚、搵你訴苦，你第一反應是？",
+            options: [
+                { text: "即刻幫他理性分析原因，客觀評估下一步應該點做，俾啲實質建議。", effect: { int: 2, con: 1 } },
+                { text: "同理咗佢感受先，陪佢一齊唔安樂、流淚，同埋默默為佢嘅情緒禱告。", effect: { wis: 2, cha: 1 } }
+            ]
+        },
+        {
+            question: "班會改選，老師想推舉你做班長或者核心班委，你內心的真實想法是？",
+            options: [
+                { text: "好呀，順便挑戰下自己嘅領導能力，為同學服務！", effect: { cha: 2, con: 1 } },
+                { text: "千萬唔好揀我……最好俾我安安靜靜做個透明人。", effect: { wis: 1, int: 1 } }
+            ]
+        },
+        {
+            isBranchTrigger: true,
+            question: "升上中學，課業與生活壓力開始湧現，你決定將時間主要投留在？",
+            options: [
+                { text: "A. chur 爆補習讀死書，誓要入大學做專才", branch: 'A', effect: { int: 3, con: -1 } },
+                { text: "B. 投身熱門運動校隊，做學界風雲人物", branch: 'B', effect: { con: 3, cha: 1 } },
+                { text: "C. 積極參與教會事奉，看重屬靈生命過於一切", branch: 'C', effect: { wis: 3, cha: 1 } },
+                { text: "D. hea 吓算啦，打機、追劇，順其自然過日子", branch: 'D', effect: { con: 1, int: -1 } }
+            ]
+        }
+    ];
+
+    // 分支路線題目庫 (Q5 - Q12)
+    const branchPool = {
+        'A': [ 
+            { question: "【學霸線】考試前夕，老友叫通水俾答案佢抄，你會？", options: [{text:"A. 堅決拒絕，甚至大義滅親去舉報公義", effect:{wis:2, cha:-2}}, {text:"B. 講義氣！頂硬上幫老友一把", effect:{cha:2, wis:-2}}] },
+            { question: "【學霸線】面臨 DSE 公開試，你採取咩策略？", options: [{text:"A. 閉關！停晒所有娛樂同聚會，全力溫書", effect:{int:2, wis:-2}}, {text:"B. 照舊返聚會，溫書時間隨緣啦", effect:{wis:2, int:-1}}] },
+            { question: "【學霸線】入大學選科，神學／哲學系係你理想，但屋企人施壓要你讀神科（醫科/法律/環球金融），你？", options: [{text:"A. 聽屋企人話，向現實低頭，入讀賺大錢嘅神科", effect:{int:2, wis:-1}}, {text:"B. 據理力爭，堅持自己理想，讀自己真心鍾意嘅科目", effect:{wis:2, cha:1}}] },
+            { question: "【學霸線】畢業入行後，身邊同學日日講炒股、買 Crypto 走捷徑，你？", options: [{text:"A. 「人生太短，出手要更大」all-in，用埋槓桿炒埋一份", effect:{wis:-2, int:1}}, {text:"B. 踏實儲錢，報讀啲專業證書自我增值", effect:{int:2}}] },
+            { question: "【學霸線】升做公司高級管理層，你發現高層集體逃稅同造假數，如果不配合就會被離職，你？", options: [{text:"A. 同流合污，保住層樓同高薪厚職", effect:{int:1, wis:-3}}, {text:"B. 做吹哨者揭發事件，寧願冇咗份工都要維持誠信", effect:{wis:3, con:-1}}] },
+            { question: "【學霸線】獵頭公司開雙倍人工挖你，但要長駐外地同屋企人分開，你會？", options: [{text:"A. 去馬！為咗事業同埋搵大錢，無辦法啦", effect:{int:2, cha:-2}}, {text:"B. 唔做太空人，全家一齊移民過去開展新生活", effect:{con:-1, int:1}}] },
+            { question: "【學霸線】四十多歲，事業到頂點但身心俱疲，你開始懷疑人生意義，此時你會？", options: [{text:"A. 報讀兼讀制神學證書，嘗試將信仰與專業結合", effect:{wis:2, int:1}}, {text:"B. 買架跑車、發展新嗜好，用消費去填補內心空虛", effect:{cha:1, int:-1}}] },
+            { question: "【學霸線】來到規劃遺產之時，你對一生所賺財富的看法是？", options: [{text:"A. 留一部分給仔女，其餘全數捐俾教會或者福音機構", effect:{wis:2, int:1}}, {text:"B. 設立一個特別基金，專門用嚟資助神學生或者海外宣教士", effect:{wis:3}}] }
+        ],
+        'B': [ 
+            { question: "【職場線】校隊練習影響咗課業，班導師警告你再唔交功課就停賽，你？", options: [{text:"A. 頂硬上，通宵做功課，死都要保住出賽資格", effect:{con:2, int:1}}, {text:"B. 乾脆請假退出校隊，回歸現實老實讀書", effect:{int:2, cha:-1}}] },
+            { question: "【職場線】剛畢業遇上經濟大蕭條，寄咗幾百封信都冇回音，此時你會？", options: [{text:"A. 咩工都做住先，就算係體力勞動或者 sales 都殺", effect:{con:2, cha:1}}, {text:"B. 留喺屋企裝備自己，每日瘋狂祈禱求神開路", effect:{wis:2}}] },
+            { question: "【職場線】第一份工個 Senior / 老闆超級 chur 又刻薄，老奉要你無償 OT，你？", options: [{text:"A. 頂硬上硬食，通宵趕起佢，期望有日上位", effect:{con:-2, int:1}}, {text:"B. 唔受氣！即刻遞信裸辭搵新機會", effect:{cha:1}}] },
+            { question: "【職場線】公司有個上位晉升機會，但需要用些少辦公室政治手段去踩低同事，你？", options: [{text:"A. 順應職場潛規則，不擇手段上咗位先講", effect:{int:2, wis:-2, cha:-1}}, {text:"B. 做好本份，完全唔參與任何辦公室鬥爭", effect:{wis:1}}] },
+            { question: "【職場線】你自己出嚟創業，大客戶暗示只要你帶他去不道德場所應酬，就會簽大單，你？", options: [{text:"A. 商場如戰場，為咗公司生存，硬住頭皮去應酬", effect:{cha:2, wis:-2}}, {text:"B. 堅守信仰道德底線，拒絕不正當應酬，哪怕冇咗張單", effect:{wis:3, con:1}}] },
+            { question: "【職場線】高壓生活令你突然患上大病，醫生警告你唔改習慣隨時死，你會？", options: [{text:"A. 減少工作，開始注重養生、做運動", effect:{con:3, int:-1}}, {text:"B. 意見接受，態度照舊，繼續為咗生計拼條命", effect:{con:-3, int:1}}] },
+            { question: "【職場線】中年步入穩定，你可以選擇留喺大公司等退休，或者一搏頂下朋友間茶餐廳做老闆，你？", options: [{text:"A. 留在大公司，不求有功但求無過，安穩過日子", effect:{con:1, cha:-1}}, {text:"B. 再熱血一次！頂嚟做，自己做老闆掌控命運", effect:{cha:2, con:-1}}] },
+            { question: "【職場線】步入晚年，睇到身邊同齡嘅人好似個個都上晒岸、住大屋，你開始好焦慮：", options: [{text:"A. 喺 IG / Facebook 狂曬精緻生活，報喜不報憂", effect:{cha:-1}}, {text:"B. 學習知足，喺主入面尋找真正嘅生命價值", effect:{wis:3}}] }
+        ],
+        'C': [ 
+            { question: "【事奉線】班上面個同學俾成班人集體杯葛（孤立），身為小組組長嘅你會？", options: [{text:"A. 懶理人哋眼光，繼續同佢做 Friends", effect:{wis:2, cha:1}}, {text:"B. 驚惹禍上身、保持距離，私下默默為佢祈禱", effect:{wis:1, cha:-1}}] },
+            { question: "【事奉線】身邊啲老友開始遠離教會，仲約你禮拜日去船 p，你點回應？", options: [{text:"A. 返少一次聚會，去 party 到拓展下人脈", effect:{cha:2, wis:-2}}, {text:"B. 反客為主，邀請朋友一齊嚟教會聚會", effect:{cha:1, wis:1}}] },
+            { question: "【事奉線】教會組織一班人去落後地區做艱苦短宣，需要自費兼請一個星期大假，你？", options: [{text:"A. 立即報名！錢同假都係身外物，體驗宣教最要緊", effect:{wis:2, con:-1}}, {text:"B. 婉拒，覺得留在本地做好日常街頭佈道更實際", effect:{con:1, wis:1}}] },
+            { question: "【事奉線】你遇到個 Perfect 嘅對象，但佢唔信主仲對信仰幾抗拒，你？", options: [{text:"A. 堅持「信與不信不能同負一軛」，唯有忍痛放手", effect:{wis:2}}, {text:"B. 試下帶佢返團契，俾彼此三個月時間睇下點", effect:{cha:1, wis:1}}] },
+            { question: "【事奉線】經濟拮据，交完租金所剩無幾，主日崇拜奉獻袋傳到你面前，你？", options: [{text:"A. 憑信心堅持十一奉獻，相信神必供應", effect:{wis:3}}, {text:"B. 現實少少，今個月奉獻住一兩百先，遲啲補返", effect:{con:1, wis:-1}}] },
+            { question: "【事奉線】教會邀請你擔任重要領油崗位，但你呢排生活忙到就嚟嘔，你？", options: [{text:"A. 毅然順服應承，寧願犧牲瞓覺時間都抽空事奉", effect:{wis:2, con:-1}}, {text:"B. 婉拒並推薦更適合嘅人，自己在背後代禱兼做後勤支持", effect:{wis:1, cha:1}}] },
+            { question: "【事奉線】喺一次培靈會中你深受感動，傳道人呼召全職奉獻，你內心交戰：", options: [{text:"A. 報讀神學院，放低世俗事業，一生全職事奉主", effect:{wis:3, cha:-1}}, {text:"B. 留在職場做帶職事奉的信徒，做職場的鹽和光", effect:{int:1, wis:1}}] },
+            { question: "【事奉線】執事會內訌、人事分裂，令你極度失望，你會？", options: [{text:"A. 灰心離開，轉去第二間教會甚至唔返，過隱士生活", effect:{wis:-2, cha:-1}}, {text:"B. 認定教會雖不完美但仍是主的身體，留下陪伴弱小", effect:{wis:3, con:1}}] }
+        ],
+        'D': [ 
+            { question: "【佛系線】DSE 放榜成績不理想，你傾向點做？", options: [{text:"A. 索性出社會做嘢，提早賺錢自主人生", effect:{cha:1}}, {text:"B. 衝返教會搵導師、傳道人祈禱，尋求神指引", effect:{wis:2}}] },
+            { question: "【佛系線】大專畢業累積到第一筆小資產，你最想用嚟做乜？", options: [{text:"A. 去一趟渴望已久嘅長途 Working Holiday / 旅行放鬆", effect:{con:1}}, {text:"B. 早買早享受，攞D錢去玩咗先再算", effect:{cha:1, con:-1}}] },
+            { question: "【佛系線】老友約你禮拜日去 Party，同時間係主日崇拜，你點抉擇？", options: [{text:"A. 去 join party，話晒去拓展下人脈都好", effect:{cha:2, wis:-2}}, {text:"B. 兩邊跑！朝早返完崇拜，下晝衝去搵朋友，chur 盡星期日", effect:{con:-2}}] },
+            { question: "【佛系線】身邊人人都在談論買樓上車，你手頭上有筆錢可以俾首期，但之後要三十年不吃不喝供樓，你？", options: [{text:"A. 租屋算啦！自由誠可貴，唔想成世幫銀行打工", effect:{con:1, int:-1}}, {text:"B. 上車啦！做人一定要有層樓先有安全感", effect:{int:2, con:-2}}] },
+            { question: "【佛系線】結婚之後，面對工作生活的壓力，同伴侶關係越黎越差，你會？", options: [{text:"A. 報名參加恩愛夫婦營，努力改善彼此溝通", effect:{cha:2, wis:1}}, {text:"B. 無心經營，過住相敬如賓、同床異夢嘅生活", effect:{con:-1}}] },
+            { question: "【佛系線】朝九晚五好悶，你嘗試將興趣發展成副業（如拍片、手作），小有成就，你？", options: [{text:"A. 職去正職，成為全職自由職業者（Freelancer）", effect:{cha:2, con:-1}}, {text:"B. 繼續當副業玩下，始終正職有一份穩定人工重要啲", effect:{int:1}}] },
+            { question: "【佛系線】孩子長大了，家庭負擔減輕，你突然驚覺自己好多年冇認真讀經祈禱，你？", options: [{text:"A. 加入教會的查經小組，搵返起初對信仰團火", tag: "rekindle", effect:{wis:3}}, {text:"B. 繼續佛系，禮拜日有時間就返，冇時間就休息", effect:{con:1, wis:-1}}] },
+            { question: "【佛系線】退休之後突然多咗大把時間，你點樣打發日子？", options: [{text:"A. hea 住過日子，每日喺公園流連、看電視", effect:{con:-1, int:-1}}, {text:"B. 幫仔女全職湊孫、打點家務，繼續燃燒體力", effect:{con:-2, cha:2}}] }
+        ]
+    };
+
+    // 暮年與終章題目庫 (Q13 - Q20)
+    const endQuestions = [
+        { question: "步入七十歲，關節開始退化，醫生建議你減少劇烈活動，此時你會？", options: [{text:"聽醫生話，轉做慢跑、拉筋或長者伸展操，好好保養。", effect:{con:2}}, {text:"不服老！繼續跟後生仔去爬山、跑馬拉松，覺得心態決定一切。", effect:{cha:2, con:-2}}] },
+        { question: "執子之手的老伴或幾十年的教會摰友比你先走一步，面對巨大的孤獨感，你？", options: [{text:"將思念化為祈禱，更加仰望天家，並多去關心團契其他獨居長者。", effect:{wis:3}}, {text:"難以走出傷痛，開始不自覺地過度依賴仔女或變得意志消沉。", effect:{con:-1, wis:-1}}] },
+        { question: "你的成年子女突然宣布因為種種原因決定「離開教會、不再信主」，你會？", options: [{text:"強烈責備，甚至用經濟或家庭關係施壓，強迫他們必須返教會。", effect:{cha:-2, wis:-1}}, {text:"放手交託，尊重他們的自由意志，但默默流淚為他們的靈魂代禱。", effect:{wis:3, cha:1}}] },
+        { question: "兒孫在節日回來看望你，希望聽你講講「以前的故事」，你最想分享的是？", options: [{text:"分享自己當年喺社會上點樣拼搏、賺錢、買樓嘅成功經驗。", effect:{int:2}}, {text:"分享神喺自己一生中點樣帶領、開路同保守嘅恩典見證。", effect:{wis:2, cha:1}}] },
+        { question: "躺在病床上，你知道自己剩下的日子不多了，你對「死亡」的態度是？", options: [{text:"內心平安，因為知道這只是短暫睡去，未來在天家必與主相見。", effect:{wis:3}}, {text:"充滿遺憾，覺得還有很多世俗的事沒做完、放不下子孫。", effect:{con:-1, wis:-1}}] },
+        { question: "臨終前，後代同教會嘅弟兄姊妹圍喺你床前，你最後最想同佢哋講嘅心底話係？", options: [{text:"「聽我講，無論以後人生遇到咩情況，一生都唔好離開神。」", effect:{wis:3}}, {text:"「我好攰喇，想好好地瞓一覺喇。」", effect:{con:1}}] },
+        { question: "最後一刻，你腦海中浮現出嚟嘅一首詩歌 / 一句經文係？", options: [{text:"Ref: 耶和華是我的牧者，我必不致缺乏……", effect:{wis:2}}, {text:"腦海一片空白，得返對死亡嘅恐懼……", effect:{wis:-2}}] },
+        { question: "靈魂離開身體，你來到主耶穌的審判台前。主看著你的一生，你最希望聽到祂對你說哪句話？", options: [{text:"「你這個又良善又忠心的僕人，可以進來享受你主人的快樂。」", effect:{wis:3, cha:1}}, {text:"「我知道你一生辛苦了，進來歇了你的勞苦吧。」", effect:{con:2}}] }
+    ];
+
+    let gameTags = [];
+
+    // 初始化遊戲
+    function initGame() {
+        stats = { wis: 0, int: 0, con: 0, cha: 0 };
+        currentStep = 0;
+        chosenBranch = '';
+        gameTags = [];
+        userAnswersLog = []; // 清空之前的答題紀錄
+        dynamicQuestions = [...baseQuestions];
+        renderAllQuestions();
+        showQuestion(0);
+        document.getElementById('game-core').style.display = 'block';
+        document.getElementById('result-page').style.display = 'none';
+    }
+
+    // 渲染所有題目 HTML 到容器內
+    function renderAllQuestions() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+        
+        dynamicQuestions.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = `quiz-card q-idx-${index}`;
+            card.id = `q-card-${index}`;
+            
+            let optionsHTML = '';
+            q.options.forEach((opt, oIdx) => {
+                optionsHTML += `<button class="option-btn" onclick="handleSelect(${index}, ${oIdx})">${opt.text}</button>`;
+            });
+
+            card.innerHTML = `
+                <div class="progress">問題 ${index + 1} / 20</div>
+                <div class="question">${q.question}</div>
+                <div class="options-list">${optionsHTML}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // 顯示特定步數的題目
+    function showQuestion(index) {
+        const activeCard = document.querySelector('.quiz-card.active');
+        if (activeCard) activeCard.classList.remove('active');
+        
+        const targetCard = document.getElementById(`q-card-${index}`);
+        if (targetCard) targetCard.classList.add('active');
+    }
+
+    // 處理玩家點擊選項
+    function handleSelect(qIdx, oIdx) {
+        const qData = dynamicQuestions[qIdx];
+        const optSelected = qData.options[oIdx];
+
+        // 儲存玩家該題的作答歷史
+        userAnswersLog.push({
+            qText: qData.question,
+            aText: optSelected.text
+        });
+
+        // 1. 結算數值 (背景運算)
+        if (optSelected.effect) {
+            for (let stat in optSelected.effect) {
+                stats[stat] += optSelected.effect[stat];
+            }
+        }
+
+        // 標記特別標籤
+        if (optSelected.tag) {
+            gameTags.push(optSelected.tag);
+        }
+
+        // 2. 如果是關鍵分歧點 (Q4)，動態拼接後續題目
+        if (qData.isBranchTrigger) {
+            chosenBranch = optSelected.branch;
+            dynamicQuestions = [
+                ...baseQuestions,
+                ...branchPool[chosenBranch],
+                ...endQuestions
+            ];
+            renderAllQuestions(); 
+        }
+
+        // 3. 進入下一題或結算結局
+        currentStep++;
+        if (currentStep < 20) {
+            showQuestion(currentStep);
+        } else {
+            calculateResult();
+        }
+    }
+
+    // 計算最終結局
+    function calculateResult() {
+        document.getElementById('game-core').style.display = 'none';
+        const resPage = document.getElementById('result-page');
+        resPage.style.display = 'block';
+
+        let title = '';
+        let body = '';
+        let tip = '';
+
+        let maxStat = 'wis';
+        let maxVal = stats.wis;
+        ['int', 'con', 'cha'].forEach(s => {
+            if (stats[s] > maxVal) {
+                maxVal = stats[s];
+                maxStat = s;
+            }
+        });
+
+        // 🔴 優先判斷隱藏結局 (WIS >= 25)
+        if (stats.wis >= 25) {
+            title = "【無憾天家：良善忠心的僕人】";
+            body = "你的一生不一定大富大貴，甚至在人眼中可能有些平凡或 churr 爆，但在天國的帳簿上，你是一個不折不扣的「得勝者」。面對職場誘惑、教會分裂、愛情的抉擇，你都選擇了看重神的國和神的義。臨終前你心中沒有恐懼，只有滿滿的平安。當你張開眼，看見主耶穌微笑著對你說：『你這個又良善又忠心的僕人，可以進來享受你主人的快樂。』";
+            tip = "💡 屬靈小叮嚀：「那美好仗我已經打過了，當跑的路我已經跑盡了，所信的道我已經守住了。」你活出了生命的最高價值！";
+        }
+        // 🔵 依分支與最高屬性判斷
+        else if (chosenBranch === 'A') { 
+            if (maxStat === 'int') {
+                title = "【離地信徒：律法主義的大法官】";
+                body = "你成為了人人羨慕的社會菁英，頭銜很多、收入很高，聖經知識也懂得非常多。但不知不覺中，你的信仰變成了一場「腦部運動」。你在團契裡最喜歡糾正別人的神學錯誤，對帶領的小組員要求極高，卻少了同理與恩典。你贏了所有辯論，卻發現身邊沒有人敢和你分享真心話。退休後，你守著滿屋的專業證書和神學書，內心卻感到一絲孤寂。";
+                tip = "💡 屬靈小叮嚀：知識叫人自高自大，唯有愛心能造就人。試著放下判斷的放大鏡，用耶穌的眼睛去愛身邊不完美的人吧。";
+            } else {
+                title = "【專業帶職：職場的鹽和光】";
+                body = "你成功將「專業」與「信仰」完美結合。你沒有全職奉獻，但你在你的專業領域（醫療、法律、商業等）裡，成為了最可靠的守門人。你拒絕了同流合污，用誠實賺取財富，並在暗中資助了很多神學生與宣教士。你用生命向身邊的菁英階層證明：一個有信仰的高級知識份子，可以活得如此有風骨與愛心。";
+                tip = "💡 屬靈小叮嚀：你就是神安插在職場的宣教士，你的專業就是你事奉的祭壇！";
+            }
+        } 
+        else if (chosenBranch === 'B') { 
+            if (stats.con < 5) {
+                title = "【職場社畜：燃盡燈芯的窮忙族】";
+                body = "「上車、升職、贏在起跑線」成為了你前半生的主旋律。你為了生計和面子瘋狂 OT、應酬，甚至不惜踐踏健康。你常對自己說「等我賺夠錢、買了樓就好好返教會」，結果崇拜時間你都在補眠，團契生活只剩下 Facebook 上的點讚。晚年時，你拼到了財富，卻換來一身勞疾與破碎的家庭關係，驚覺自己用靈魂換了世界的繁華。";
+                tip = "💡 屬靈小叮嚀：人若賺得全世界，賠上自己的生命，有什麼益處呢？停一停，聽聽主耶穌叫你「到祂這裡來安息」的聲音。";
+            } else {
+                title = "【熱血元老：教會的同行帶跑者】";
+                body = "你是那種就算工作再忙、身體再累，星期日還是會帶領年青人去打波、行山的熱血大叔/大嬸！你用你拼搏的經歷成為後輩的榜樣，不講大道理，只講人生經驗。在教會裡，哪裡需要搬搬抬抬、哪裡需要熱血籌辦活動，你總是第一個衝。雖然你沒當上傳道人，但你用生命影響生命，陪伴了一代又一代青少年的成長。";
+                tip = "💡 屬靈小叮嚀：你的活力和熱情是教會無價的資產，繼續用你的生命力點燃身邊的人！";
+            }
+        } 
+        else if (chosenBranch === 'C') { 
+            title = "【靈性枯竭：耗盡 (Burnout) 的事奉機器】";
+            body = "你走上了全職或核心事奉的路，起初滿腔熱血，但漸漸地，無止境的會議、教會的人事八卦、執事會的內訌，磨光了你對神所有的愛。你每天都在「為神作工」，自己卻很久沒有好好禱告和親近神。你變成了一台精密的宗教機器，禮拜日站在台上事奉，內心卻一片荒涼。最後，你帶著滿身的傷痕與失望，悄然淡出了教會。";
+            tip = "💡 屬靈小叮嚀：事奉的源頭是「與主連結」，而不是「做很多事」。先回到主耶穌的懷抱裡當個孩子，醫治好了，再談事奉吧。";
+        } 
+        else if (chosenBranch === 'D') { 
+            if (gameTags.includes("rekindle")) {
+                title = "【浪子回頭：重燃初心的火熱門徒】";
+                body = "你前半生隨波逐流，返聚會可有可無，過著標準的佛系生活。但在人生的下半場，經歷了生活的毒打與柴米油鹽的沉澱，你突然醒悟過來，驚覺自己離神太遠。你選擇在晚年重新加入查經小組，搵返起初對信仰團火。雖然起步慢了，但你的後半生燃燒得比誰都燦爛，成為了身邊人驚嘆的見證。";
+                tip = "💡 屬靈小叮嚀：神的恩典永遠不嫌晚！只要願意回頭，你的下半場人生一樣可以為主作大合用的器皿。";
+            } else {
+                title = "【邊緣羊羔：星期日基督徒 (Sunday Christian)】";
+                body = "你過完了極度平淡、安全、不冒險的一生。對你來說，信仰就像是一份定期定額的保險——禮拜日準時出席（通常還遲到），坐後排，聽完道就走，不參與事奉，不進入深度關係。你完美避開了教會所有的人事紛紛，但也完美錯過了與弟兄姊妹同甘共苦、經歷神蹟的精彩人生。來到生命終點，你的信仰履歷表上一片空白。";
+                tip = "💡 屬靈小叮嚀：信仰不是觀眾席，而是一場要親自落場跑的馬拉松。試著跨出舒適圈，哪怕只是參與一次小組服侍，你都會看到不一樣的風景。";
+            }
+        }
+
+        document.getElementById('result-title').innerText = title;
+        document.getElementById('result-body').innerText = body;
+        document.getElementById('result-tip').innerText = tip;
+
+        // 渲染答題紀錄歷史
+        renderHistoryList();
+    }
+
+    // 把答題紀錄輸出到網頁上
+    function renderHistoryList() {
+        const historyListDiv = document.getElementById('history-list');
+        historyListDiv.innerHTML = '';
+
+        userAnswersLog.forEach((item, index) => {
+            const histItem = document.createElement('div');
+            histItem.className = 'history-item';
+            histItem.innerHTML = `
+                <div class="history-q">Q${index + 1}. ${item.qText}</div>
+                <div class="history-a">➔ 你的抉擇：${item.aText}</div>
+            `;
+            historyListDiv.appendChild(histItem);
+        });
+    }
+
+    function restartGame() {
+        initGame();
+    }
+
+    window.onload = initGame;
+</script>
+
+</body>
+</html>
