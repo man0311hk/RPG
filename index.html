@@ -222,7 +222,7 @@
     let currentStep = 0; 
     let chosenBranch = ''; 
     let dynamicQuestions = [];
-    let userAnswersLog = []; // 用來儲存玩家選過的「題目」與「答案文本」
+    let userAnswersLog = []; // 儲存玩家選過的「題目」與「答案」
 
     // 基礎與通用題目庫
     const baseQuestions = [
@@ -249,10 +249,10 @@
         },
         {
             isBranchTrigger: true,
-            question: "升上中學，課業與生活壓力開始湧現，你決定將時間主要投留在？",
+            question: "升上中學，課業與生活壓力開始湧現，你決定將時間主要投資在？",
             options: [
                 { text: "A. chur 爆補習讀死書，誓要入大學做專才", branch: 'A', effect: { int: 3, con: -1 } },
-                { text: "B. 投身熱門運動校隊，做學界風雲人物", branch: 'B', effect: { con: 3, cha: 1 } },
+                { text: "B. 投身熱門運動校隊，做學界風雲人物", branch: 'B', branch: 'B', effect: { con: 3, cha: 1 } },
                 { text: "C. 積極參與教會事奉，看重屬靈生命過於一切", branch: 'C', effect: { wis: 3, cha: 1 } },
                 { text: "D. hea 吓算啦，打機、追劇，順其自然過日子", branch: 'D', effect: { con: 1, int: -1 } }
             ]
@@ -286,8 +286,8 @@
             { question: "【事奉線】身邊啲老友開始遠離教會，仲約你禮拜日去船 p，你點回應？", options: [{text:"A. 返少一次聚會，去 party 到拓展下人脈", effect:{cha:2, wis:-2}}, {text:"B. 反客為主，邀請朋友一齊嚟教會聚會", effect:{cha:1, wis:1}}] },
             { question: "【事奉線】教會組織一班人去落後地區做艱苦短宣，需要自費兼請一個星期大假，你？", options: [{text:"A. 立即報名！錢同假都係身外物，體驗宣教最要緊", effect:{wis:2, con:-1}}, {text:"B. 婉拒，覺得留在本地做好日常街頭佈道更實際", effect:{con:1, wis:1}}] },
             { question: "【事奉線】你遇到個 Perfect 嘅對象，但佢唔信主仲對信仰幾抗拒，你？", options: [{text:"A. 堅持「信與不信不能同負一軛」，唯有忍痛放手", effect:{wis:2}}, {text:"B. 試下帶佢返團契，俾彼此三個月時間睇下點", effect:{cha:1, wis:1}}] },
-            { question: "【事奉線】經濟拮据，交完租金所剩無幾，主日崇拜奉獻袋傳到你面前，你？", options: [{text:"A. 憑信心堅持十一奉獻，相信神必供應", effect:{wis:3}}, {text:"B. 現實少少，今個月奉獻住一兩百先，遲啲補返", effect:{con:1, wis:-1}}] },
-            { question: "【事奉線】教會邀請你擔任重要領油崗位，但你呢排生活忙到就嚟嘔，你？", options: [{text:"A. 毅然順服應承，寧願犧牲瞓覺時間都抽空事奉", effect:{wis:2, con:-1}}, {text:"B. 婉拒並推薦更適合嘅人，自己在背後代禱兼做後勤支持", effect:{wis:1, cha:1}}] },
+            { question: "【事奉線】經濟拮据，交完租金所剩無幾，主日崇拜奉獻袋傳到你面前，你？", options: [{text:"A. 憑信心堅持十一奉獻，相信神必供應", effect:{wis:3}}, {text:"B. 現實少少，今個月奉獻住一幾百先，遲啲補返", effect:{con:1, wis:-1}}] },
+            { question: "【事奉線】教會邀請你擔任重要領袖崗位，但你呢排生活忙到就嚟嘔，你？", options: [{text:"A. 毅然順服應承，寧願犧牲瞓覺時間都抽空事奉", effect:{wis:2, con:-1}}, {text:"B. 婉拒並推薦更適合嘅人，自己在背後代禱兼做後勤支持", effect:{wis:1, cha:1}}] },
             { question: "【事奉線】喺一次培靈會中你深受感動，傳道人呼召全職奉獻，你內心交戰：", options: [{text:"A. 報讀神學院，放低世俗事業，一生全職事奉主", effect:{wis:3, cha:-1}}, {text:"B. 留在職場做帶職事奉的信徒，做職場的鹽和光", effect:{int:1, wis:1}}] },
             { question: "【事奉線】執事會內訌、人事分裂，令你極度失望，你會？", options: [{text:"A. 灰心離開，轉去第二間教會甚至唔返，過隱士生活", effect:{wis:-2, cha:-1}}, {text:"B. 認定教會雖不完美但仍是主的身體，留下陪伴弱小", effect:{wis:3, con:1}}] }
         ],
@@ -297,7 +297,7 @@
             { question: "【佛系線】老友約你禮拜日去 Party，同時間係主日崇拜，你點抉擇？", options: [{text:"A. 去 join party，話晒去拓展下人脈都好", effect:{cha:2, wis:-2}}, {text:"B. 兩邊跑！朝早返完崇拜，下晝衝去搵朋友，chur 盡星期日", effect:{con:-2}}] },
             { question: "【佛系線】身邊人人都在談論買樓上車，你手頭上有筆錢可以俾首期，但之後要三十年不吃不喝供樓，你？", options: [{text:"A. 租屋算啦！自由誠可貴，唔想成世幫銀行打工", effect:{con:1, int:-1}}, {text:"B. 上車啦！做人一定要有層樓先有安全感", effect:{int:2, con:-2}}] },
             { question: "【佛系線】結婚之後，面對工作生活的壓力，同伴侶關係越黎越差，你會？", options: [{text:"A. 報名參加恩愛夫婦營，努力改善彼此溝通", effect:{cha:2, wis:1}}, {text:"B. 無心經營，過住相敬如賓、同床異夢嘅生活", effect:{con:-1}}] },
-            { question: "【佛系線】朝九晚五好悶，你嘗試將興趣發展成副業（如拍片、手作），小有成就，你？", options: [{text:"A. 職去正職，成為全職自由職業者（Freelancer）", effect:{cha:2, con:-1}}, {text:"B. 繼續當副業玩下，始終正職有一份穩定人工重要啲", effect:{int:1}}] },
+            { question: "【佛系線】朝九晚五好悶，你嘗試將興趣發展成副業（如拍片、手作），小有成就，你？", options: [{text:"A. 辭去正職，成為全職自由職業者（Freelancer）", effect:{cha:2, con:-1}}, {text:"B. 繼續當副業玩下，始終正職有一份穩定人工重要啲", effect:{int:1}}] },
             { question: "【佛系線】孩子長大了，家庭負擔減輕，你突然驚覺自己好多年冇認真讀經祈禱，你？", options: [{text:"A. 加入教會的查經小組，搵返起初對信仰團火", tag: "rekindle", effect:{wis:3}}, {text:"B. 繼續佛系，禮拜日有時間就返，冇時間就休息", effect:{con:1, wis:-1}}] },
             { question: "【佛系線】退休之後突然多咗大把時間，你點樣打發日子？", options: [{text:"A. hea 住過日子，每日喺公園流連、看電視", effect:{con:-1, int:-1}}, {text:"B. 幫仔女全職湊孫、打點家務，繼續燃燒體力", effect:{con:-2, cha:2}}] }
         ]
@@ -323,7 +323,7 @@
         currentStep = 0;
         chosenBranch = '';
         gameTags = [];
-        userAnswersLog = []; // 清空之前的答題紀錄
+        userAnswersLog = []; 
         dynamicQuestions = [...baseQuestions];
         renderAllQuestions();
         showQuestion(0);
@@ -375,7 +375,7 @@
             aText: optSelected.text
         });
 
-        // 1. 結算數值 (背景運算)
+        // 結算數值 (背景運算)
         if (optSelected.effect) {
             for (let stat in optSelected.effect) {
                 stats[stat] += optSelected.effect[stat];
@@ -387,7 +387,7 @@
             gameTags.push(optSelected.tag);
         }
 
-        // 2. 如果是關鍵分歧點 (Q4)，動態拼接後續題目
+        // 如果是關鍵分歧點 (Q4)，動態拼接後續題目
         if (qData.isBranchTrigger) {
             chosenBranch = optSelected.branch;
             dynamicQuestions = [
@@ -398,7 +398,7 @@
             renderAllQuestions(); 
         }
 
-        // 3. 進入下一題或結算結局
+        // 進入下一題或結算結局
         currentStep++;
         if (currentStep < 20) {
             showQuestion(currentStep);
@@ -426,13 +426,13 @@
             }
         });
 
-        // 🔴 優先判斷隱藏結局 (WIS >= 25)
+        // 優先判斷隱藏結局 (WIS >= 25)
         if (stats.wis >= 25) {
             title = "【無憾天家：良善忠心的僕人】";
             body = "你的一生不一定大富大貴，甚至在人眼中可能有些平凡或 churr 爆，但在天國的帳簿上，你是一個不折不扣的「得勝者」。面對職場誘惑、教會分裂、愛情的抉擇，你都選擇了看重神的國和神的義。臨終前你心中沒有恐懼，只有滿滿的平安。當你張開眼，看見主耶穌微笑著對你說：『你這個又良善又忠心的僕人，可以進來享受你主人的快樂。』";
             tip = "💡 屬靈小叮嚀：「那美好仗我已經打過了，當跑的路我已經跑盡了，所信的道我已經守住了。」你活出了生命的最高價值！";
         }
-        // 🔵 依分支與最高屬性判斷
+        // 依分支與最高屬性判斷
         else if (chosenBranch === 'A') { 
             if (maxStat === 'int') {
                 title = "【離地信徒：律法主義的大法官】";
